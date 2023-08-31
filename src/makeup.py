@@ -1,6 +1,6 @@
 # system libs
 from os.path import join
-import time 
+import time
 
 # general libs
 import cv2
@@ -13,7 +13,8 @@ from .reinitial import Reinitial
 from .teethSeg import PseudoER, InitContour, Snake, TEM, ReinitialKapp
 
 # global variables
-jet_alpha = mts.colorMapAlpha(plt)
+try:jet_alpha = mts.colorMapAlpha(plt)
+except: pass
 brg_alpha = mts.colorMapAlpha(plt, cmap='brg')
 
 
@@ -23,7 +24,7 @@ class TeethSeg():
         self.sts = sts
         self.config = config
         self.maxlen = 500
-        
+
         print(f'[{time.strftime("%y%m%d-%H:%M:%S", time.localtime(time.time()))}] Image {num_img}, initiating...')
 
         # set an empty dictionary
@@ -57,7 +58,7 @@ class TeethSeg():
     def initContour(self):
         print(f'[{time.strftime("%y%m%d-%H:%M:%S", time.localtime(time.time()))}] Step2: Refining pre-edge region...')
         img, per0 = self._dt['img'], self._dt['per0']
-        
+
         if self.config['RESIZE']:
             m, n = img.shape[:2]
             if n > self.maxlen:
@@ -67,12 +68,12 @@ class TeethSeg():
         if self.config['RESIZE']:
             if n > self.maxlen:
                 initC.per = self._resize(initC.per, restore=(m, n))
-                initC.phi0 = self._resize(initC.phi0.transpose(1, 2, 0), restore=(m, n)).transpose(2, 0, 1)
-        self._dt.update({
-            'phi0': initC.phi0, 'per': initC.per,
-            })
-
-        mts.saveFile(self._dt, self.path_dict)
+        #         initC.phi0 = self._resize(initC.phi0.transpose(1, 2, 0), restore=(m, n)).transpose(2, 0, 1)
+        # self._dt.update({
+        #     'phi0': initC.phi0, 'per': initC.per,
+        #     })
+        #
+        # mts.saveFile(self._dt, self.path_dict)
         self.sts.imwrite(initC.per * 255, 'P.png')
         return 0
 
@@ -94,7 +95,7 @@ class TeethSeg():
                 SNK.fa = self._resize(SNK.fa, restore=(m, n))
                 SNK.er = self._resize(SNK.er.astype(float), restore=(m, n))
         self._dt.update({
-            'phi_res': phi_res, 'gadf': SNK.fa, 
+            'phi_res': phi_res, 'gadf': SNK.fa,
             'er': SNK.er,
         })
         mts.saveFile(self._dt, self.path_dict)

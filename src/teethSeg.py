@@ -2,7 +2,7 @@
 import os
 import sys
 from os.path import join
-import time 
+import time
 
 # general libs
 import cv2
@@ -143,16 +143,16 @@ class InitContour():
         lmk = self.getLandMarks(self.phi_per)
         self.phi_lmk = self.rein_w5_fmm.getSDF(.5 - (lmk[np.newaxis, ...] < 0))
 
-        # bring them back
-        self.phi_back = self.bringBack(self.phi_lmk, self.per, gap=8, dt=.3, mu=2, nu=1, reinterm=3, tol=2, max_iter=500)
-
-        # separate level sets 
-        reg_sep = self.sepRegions(self.phi_back)
-        phi_sep = self.rein_w5.getSDF(.5 - np.array(reg_sep))
-
-        # initials
-        phi_init = self.evolve(phi_sep, self.per, dt=.3, mu=2, nu=1, reinterm=3, tol=2, max_iter=100)
-        self.phi0 = phi_init
+        # # bring them back
+        # self.phi_back = self.bringBack(self.phi_lmk, self.per, gap=8, dt=.3, mu=2, nu=1, reinterm=3, tol=2, max_iter=500)
+        #
+        # # separate level sets
+        # reg_sep = self.sepRegions(self.phi_back)
+        # phi_sep = self.rein_w5.getSDF(.5 - np.array(reg_sep))
+        #
+        # # initials
+        # phi_init = self.evolve(phi_sep, self.per, dt=.3, mu=2, nu=1, reinterm=3, tol=2, max_iter=100)
+        # self.phi0 = phi_init
         return
 
     def preset(self):
@@ -204,7 +204,7 @@ class InitContour():
 
             reg0 = np.where(phi0 < 0, 1, 0)
             reg = np.where(phi < 0, 1, 0)
-            err.append((reg0 + reg - 2 * reg0 * reg).sum()) 
+            err.append((reg0 + reg - 2 * reg0 * reg).sum())
             if len(err) > 4:
                 if (sum(err)  < tol) or (k > max_iter):
                     break
@@ -241,7 +241,7 @@ class InitContour():
             # error estimation
             reg0 = np.where(phi0 < 0, 1, 0)
             reg = np.where(phi < 0, 1, 0)
-            err.append((reg0 + reg - 2 * reg0 * reg).sum()) 
+            err.append((reg0 + reg - 2 * reg0 * reg).sum())
             if len(err) > 4:
                 if (sum(err)  < tol) or (k > max_iter):
                     break
@@ -292,7 +292,7 @@ class Snake():
 
         stop_reg = np.ones_like(self.per)
         stop_reg[2:-2, 2:-2] = 0
-        
+
         self.use_er = self.er * ((phis > -1).sum(axis=0) == n_phis)
         oma = self.use_er
         omc = (1 - oma) * (1 - stop_reg)
@@ -322,7 +322,7 @@ class Snake():
 
             reg0 = np.where(phis < 0, 1, 0)
             reg = np.where(new_phis < 0, 1, 0)
-            err.append((reg0 + reg - 2 * reg0 * reg).sum()) 
+            err.append((reg0 + reg - 2 * reg0 * reg).sum())
             if len(err) > 4:
                 if (sum(err)  < tol) or (k > max_iter):
                     break
@@ -433,7 +433,7 @@ class ReinitialKapp(Reinitial):
         elif self.dim == 3:
             Gz = np.maximum((bza * b_sgn + bzp) ** 2, (-fza * f_sgn + fzp) ** 2)
             _G = np.sqrt(Gx + Gy + Gz) - 1
-        
+
         # for numerical stabilities, sign should be updated
         _sign0 = self.approx_sign(phi)
         kapp = mts.gaussfilt(mts.kappa(phi)[0], sig=np.ceil(m*n/300000))

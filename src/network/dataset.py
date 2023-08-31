@@ -27,8 +27,10 @@ class ErDataset(Dataset):
         self.files = []
         for file in os.listdir(dir_data):
             st = splitext(file)
-            if int(st[0]) == num_img:
-                self.files += [st[0] + st[1]]
+            try:
+                if int(st[0]) == num_img:
+                    self.files += [st[0] + st[1]]
+            except: pass
 
         logging.info(f'Creating dataset with {len(self.files)} examples')
 
@@ -53,7 +55,7 @@ class ErDataset(Dataset):
         _m, _n = self.m, self.n
         while _m % 32 != 0: _m += 1
         while _n % 32 != 0: _n += 1
-        
+
         dm = _m - self.m
         dn = _n - self.n
 

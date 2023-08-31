@@ -2,16 +2,16 @@ DEFAULT:
   ROOT: "."
   DEVICE: 'cpu'  # 'cpu', 'cuda:0' etc., only one device is supported
 DATA:
-  DIR: "dataset/samples"
+  DIR: "dataset/samples/cropped"
   EXT:
     - "png"
     - "jpg"
-    - "jpge"
+    - "jpeg"
     - "jfif"
 MODEL:
   WEIGHTS: "checkpoints/CP_teeth_seg.pth"
 EVAL:
   DIR: "outputs"
-RESIZE: False # for efficient computaion. 
+RESIZE: True # for efficient computaion. 
               # This option could speed up the entire process,
               # but segmentation quality will be lowered.
